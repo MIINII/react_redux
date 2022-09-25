@@ -1,11 +1,11 @@
 import './App.css';
 import Expenses from './components/Expenses/Expenses.jsx';
 import NewExpense from './components/NewExpense/NewExpense';
+import ExpensesFilter from './components/Expenses/ExpensesFilter';
+import ExpenseDate from './components/Expenses/ExpenseDate';
+import { useState } from 'react';
 
 function App() {
-  const addExpenseHandler = expense => {
-    console.log('🚀 * addExpenseHandler * expense', expense);
-  };
   const expenses = [
     {
       id: 'e1',
@@ -27,6 +27,12 @@ function App() {
       date: new Date(2021, 5, 12),
     },
   ];
+
+  const [expense, setExpense] = useState(expenses);
+
+  const addExpenseHandler = expense => {
+    console.log('🚀 * addExpenseHandler * expense', expense);
+  };
 
   return (
     <div className='App'>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ExpenseForm.css';
 
-const ExpenseForm = onSaveExpenseData => {
+const ExpenseForm = ({ onSaveExpenseData }) => {
   // 01-1 :하나이상의 상태를 다루는 방법 : useState()를 한번 이상 호출
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredAmount, setEnteredAmount] = useState('');
