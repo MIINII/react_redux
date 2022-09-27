@@ -1,4 +1,5 @@
 import React from 'react';
+import ExpensesFilter from '../Expenses/ExpensesFilter';
 import ExpenseForm from './ExpenseForm';
 import './NewExpense.css';
 

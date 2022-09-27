@@ -1,4 +1,4 @@
-# <span style="font-weight:700">✨ React / Redux 공부하기</span>
+# <div style="font-weight:700">✨ React / Redux 공부하기</div>
 
 ## 🎃 `useState()`를 통한 상태 관리
 
@@ -153,3 +153,71 @@ const submitHandler = e => {
   setEnteredDate('');
 };
 ```
+
+## 🎃 동적라우팅...? State저장 목록 사용
+
+<div style='color:#8ac'><u>"새로운 expense가 추가될때마다 expesne 배열을 어떻게 업뎃하는지?"</u></div>
+
+-> `useState()` 를 사용하여 관리해보자!
+
+1.  `useSate(DUMMY_EXPENSE)`를 호출해서 더미데이터를 전달 가능 : 연습용 데이터인 초기값
+2.  `const [expenses, setExpense] = useState(DUMMY_EXPENSE)` : 디스트럭쳐링(구조분해) 사용 **[expense와 함수를 업데이트 해주는 setExpenses에 접근하기 위해]**
+3.  새로운 expense를 추가해주는 `addExpenseHandler` => (기존 expense + 새로운 expense)
+4.  스프레드 연산자를 이용하여 기존의 배열에 새로운 배열 추가
+
+```jsx
+const addExpenseHandler = expense => {
+  setExpense([expense, ...expenses]);
+};
+```
+
+### 그래서 어떻게 써야하느냐~
+
+```jsx
+const DUMMY_EXPENSES = [
+  {
+    id: 'e1',
+    title: 'Toilet Paper',
+    amount: 94.12,
+    date: new Date(2020, 7, 14),
+  },
+  { id: 'e2', title: 'New TV', amount: 799.49, date: new Date(2021, 2, 12) },
+  {
+    id: 'e3',
+    title: 'Car Insurance',
+    amount: 294.67,
+    date: new Date(2021, 2, 28),
+  },
+  {
+    id: 'e4',
+    title: 'New Desk (Wooden)',
+    amount: 450,
+    date: new Date(2021, 5, 12),
+  },
+];
+
+const App = () => {
+  const [expenses, setExpenses] = useState(DUMMY_EXPENSES);
+
+  const addExpenseHandler = expense => {
+    // console.log('🚀 * addExpenseHandler * expense', expense);
+    // 상태 업데이트
+    setExpenses(prevExpenses => {
+      return [expense, ...prevExpenses]; //익스펜스에 이전익스펜스 추가
+    });
+  };
+
+  return (
+    <div className='App'>
+      <NewExpense onAddExpense={addExpenseHandler} />
+      <Expenses items={expenses} />
+    </div>
+  );
+};
+
+export default App;
+```
+
+## 🎃 `key()` 이 필요한 이유
+
+> 리액트는 데이터를 로드하는데 특별한 개념을 갖는다! 이개념은 바로 **리액트가 발생할 수 있는 어떤 성능 손실이나 버그 없이 효과적으로 목록들을 업뎃하고 렌더링 할수 있게 보장하는 존재**

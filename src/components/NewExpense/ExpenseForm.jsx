@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ExpenseForm.css';
 
-const ExpenseForm = (props) => {
+const ExpenseForm = ({ onSaveExpenseData }) => {
   // 01-1 :하나이상의 상태를 다루는 방법 : useState()를 한번 이상 호출
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredAmount, setEnteredAmount] = useState('');
@@ -27,11 +27,10 @@ const ExpenseForm = (props) => {
       amount: enteredAmount,
       date: new Date(enteredDate),
     };
-    console.log('🚀 > submitHandler > expenseData', expenseData)
-    
+    console.log('🚀 > submitHandler > expenseData', expenseData);
 
     // 함수에 매개변수로 부모에게 데이터 전달 가능
-    props.onSaveExpenseData(expenseData);
+    onSaveExpenseData(expenseData);
 
     // form 밸류를 초기화!!! 신기하당
     setEnteredTitle('');
