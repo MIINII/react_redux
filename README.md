@@ -221,3 +221,126 @@ export default App;
 ## 🎃 `key()` 이 필요한 이유
 
 > 리액트는 데이터를 로드하는데 특별한 개념을 갖는다! 이개념은 바로 **리액트가 발생할 수 있는 어떤 성능 손실이나 버그 없이 효과적으로 목록들을 업뎃하고 렌더링 할수 있게 보장하는 존재**
+
+1. key는 프롭대신 어떤 컴포넌트에도 추가 가능! 리액트가 인식할수 있게 도와주는 역할! 그래서 **아이템별로 고유값을** 정해줘야 한다.
+2. 고유 id가 없을때에는 두번쨰 인자를 사용하면 되는데 이는 map에 전달하는 함수에서 자동으로 얻어짐(그 함수는 index를 자동으로 관리해줌) : 추천X -> 버그를 발생시킬 수 있기 때문(특정한 아이템에 대한 인덱스가 항상 똑같기때문 + 아이템 컨텐츠에 직접적으로
+   첨부된 것이 아니기 때문)
+
+   ⁘ <span style='color:#56A5EC'><u>**특정 컨텐츠를 갖는 모든 아이템들은 무족권 고유한 id를 갖고 있어야함!**</u></span>
+
+3. **`map()`을 사용할땐 무족권 key값을 주자!**
+
+## 🎃 필터(filter)기능 작동하게 하기
+
+- `filter()`는 배열을 필터링해줍니다. 이 메소드에는 함수를 전달할 수 있다! <span style='font-size:18px'>그래서 `true`를 반환하면 특정 아이템은 남겨지고 `false`이면 남지않는다! 그리고 새로운 배열로 추가됨</span>
+
+```jsx
+const Expenses = props => {
+  const [filteredYear, setFilteredYear] = useState('2020');
+
+  // 연도 선택 핸들러
+  const filterChangeHandler = selectYear => {
+    console.log('🚀 ⁝ filterChangeHandler ⁝ selectYear', selectYear);
+    // flterChangHandler가 실행될때마다 파라미터로 받은 selectYear를 setFilteredYear()에 설정
+    setFilteredYear(selectYear);
+  };
+
+  // expense에서 date를 추출하여 filteredYear랑 비교
+  const filteredExpenses = props.items.filter(expense => {
+    return expense.date.getFullYear().toString() === filteredYear;
+  });
+  console.log('🚀 ⁝ filteredExpenses ⁝ filteredExpenses', filteredExpenses);
+
+  return (
+    <div>
+      <Card className='expenses'>
+        <ExpensesFilter selected={filteredYear} onChangeFilter={filterChangeHandler} />
+        {/* 동적인 구문 실행 */}
+        {/* 고유 id(ex expense)가 없을때는 두번째 인자를 사용하면 됨(map에 전달하는 함수에서 자동으로 얻어짐) */}
+        {filteredExpenses.map((expense, index) => (
+          <ExpenseItem key={expense.id} title={expense.title} amount={expense.amount} date={expense.date} />
+          // key는 프롭대신 어떤 컴포넌트에도 추가할 수 있음! 리액트가 인식할수 있게 도와줌! 그래서 아이템별로 고유값을 정해줘야함
+        ))}
+      </Card>
+    </div>
+  );
+};
+
+export default Expenses;
+```
+
+## 🎃 조건부 컨텐츠 : 데이터가 없을때에는 메세지를 띄우고싶어여
+
+> JSX코드에 동적인 표현식을 추가하고 조건을 사용하면 된다!(삼항연산자 사용)
+
+```jsx
+// Expenses.jsx
+...
+...
+...
+  return (
+    <div>
+      <Card className='expenses'>
+        <ExpensesFilter selected={filteredYear} onChangeFilter={filterChangeHandler} />
+        {/* 동적인 구문 실행 */}
+        {filteredExpenses.length === 0 ? <p style={{color:'#fff'}}>읎다</p> : filteredExpenses.map(expense => <ExpenseItem key={expense.id} title={expense.title} amount={expense.amount} date={expense.date} />)}
+        {/* 고유 id(ex expense)가 없을때는 두번째 인자를 사용하면 됨(map에 전달하는 함수에서 자동으로 얻어짐) */}
+        {/* {filteredExpenses.map((expense, index) => (
+          <ExpenseItem key={expense.id} title={expense.title} amount={expense.amount} date={expense.date} />
+          // key는 프롭대신 어떤 컴포넌트에도 추가할 수 있음! 리액트가 인식할수 있게 도와줌! 그래서 아이템별로 고유값을 정해줘야함
+        ))} */}
+      </Card>
+    </div>
+  );
+};
+```
+
+### 아래 두개는 같은 코드입니다(자바스크립트구문 남용하기 ㅎㅋ)
+
+```jsx
+{
+  filteredExpenses === 0 && <p style={{ color: '#fff' }}>읎다</p>;
+}
+```
+
+```jsx
+{
+  filteredExpenses.length === 0 ? <p style={{ color: '#fff' }}>읎다</p> : filteredExpenses.map(expense => <ExpenseItem key={expense.id} title={expense.title} amount={expense.amount} date={expense.date} />);
+}
+```
+
+=> 두개를 합치면?
+
+```jsx
+{
+  filteredExpenses === 0 && <p style={{ color: '#fff' }}>읎다</p>;
+}
+{
+  filteredExpenses.length > 0 && filteredExpenses.map(expense => <ExpenseItem key={expense.id} title={expense.title} amount={expense.amount} date={expense.date} />);
+}
+```
+
+### 💥 좀 더 깔끔하게 : **변수추가하기**
+
+> 반환하기 전에 if문을 편집할 수 있기 때문에 변수를 추가하는 방법을 쓴다.
+
+```jsx
+// Expenses.jsx 를 더 깔끔하게!
+...
+...
+...
+let expensesContent = <p>읎다</p>;
+
+if (filteredExpenses.length > 0) {
+  expensesContent = filteredExpenses.map(expense => <ExpenseItem key={expense.id} title={expense.title} amount={expense.amount} date={expense.date} />);
+}
+
+return (
+  <div>
+    <Card className='expenses'>
+      <ExpensesFilter selected={filteredYear} onChangeFilter={filterChangeHandler} />
+      {expensesContent}
+    </Card>
+  </div>
+);
+```
