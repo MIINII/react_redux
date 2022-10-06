@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ExpenseForm.css';
 
-const ExpenseForm = ({ onSaveExpenseData }) => {
+const ExpenseForm = ({ onSaveExpenseData, onCancel }) => {
   // 01-1 :하나이상의 상태를 다루는 방법 : useState()를 한번 이상 호출
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredAmount, setEnteredAmount] = useState('');
@@ -60,6 +60,9 @@ const ExpenseForm = ({ onSaveExpenseData }) => {
       </div>
 
       <div className='new-expense__actions'>
+        <button type='button' onClick={onCancel}>
+          취소
+        </button>
         <button type='submit'>Add Expense</button>
         {/* 브라우저에 내장된 기본동작과 웹페이지에 내장된 폼이 있기때문에 onClick이벤트는 별로 좋지아늠 */}
       </div>

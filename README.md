@@ -222,6 +222,10 @@ export default App;
 
 > 리액트는 데이터를 로드하는데 특별한 개념을 갖는다! 이개념은 바로 **리액트가 발생할 수 있는 어떤 성능 손실이나 버그 없이 효과적으로 목록들을 업뎃하고 렌더링 할수 있게 보장하는 존재**
 
+리액트한테는 각각 아이템이 다 비슷해보입니다. 그래서 새로운 아이템이 어느 위치에 추가 되어야하는지를 잘 모름 👉 <span style='color:#56A5EC; font-size:18px'>_새로운 아이템이 어디에 추가되어야 하는지 리액트한테 알려줘야해!_</span>
+
+위에 작업을 아이템 목록이 출력되는 곳에가서 할수있음<span style='color:#E42217; font-size:18px'>(=`key props`추가)</span>
+
 1. key는 프롭대신 어떤 컴포넌트에도 추가 가능! 리액트가 인식할수 있게 도와주는 역할! 그래서 **아이템별로 고유값을** 정해줘야 한다.
 2. 고유 id가 없을때에는 두번쨰 인자를 사용하면 되는데 이는 map에 전달하는 함수에서 자동으로 얻어짐(그 함수는 index를 자동으로 관리해줌) : 추천X -> 버그를 발생시킬 수 있기 때문(특정한 아이템에 대한 인덱스가 항상 똑같기때문 + 아이템 컨텐츠에 직접적으로
    첨부된 것이 아니기 때문)
@@ -343,4 +347,72 @@ return (
     </Card>
   </div>
 );
+```
+
+## 🎃 조건 명령문 반환 추가
+
+```jsx
+// Expenses.jsx
+import React from 'react';
+import ExpenseItem from './ExpenseItem';
+import './ExpensesList.css';
+
+const ExpenseseList = props => {
+  // let expensesContent = <p>읎다</p>;
+
+  // if (props.items.length > 0) {
+  //   expensesContent = ;
+  // }
+
+  // 아이템이 없을때 반환하는것 : 조건부컨텐츠를 처리하는 다른 방법
+  // 만약 다양한 조건에서 컴포넌트가 반환하는 것이 전부 바뀌면 이렇게 사용하면된다!
+  if (props.items.length === 0) {
+    // 데이터가 사라지고 컨텐츠가 변경된다면 반환하는곳에 항상 if문 추가 가능
+    return <h2 className='expenses-list__fallback'>찾을수가 읎어요</h2>;
+  }
+
+  return (
+    <ul className='expenses-list'>
+      {props.items.map(expense => (
+        <ExpenseItem key={expense.id} title={expense.title} amount={expense.amount} date={expense.date} />
+      ))}
+    </ul>
+  );
+};
+
+export default ExpenseseList;
+```
+
+``` jsx
+// ExpensesItem.jsx
+import { useState } from 'react';
+import { click } from '@testing-library/user-event/dist/click';
+import Card from '../UI/Card';
+import ExpenseDate from './ExpenseDate';
+import './ExpenseItem.css';
+
+const ExpenseItem = props => {
+  // const [title, setTitle] = useState(props.title);
+
+  // const clickHandler = () => {
+  //   setTitle('Updated!');
+  //   console.log('🚀 ~ ExpenseItem ~ title', title);
+  // };
+
+  return (
+    <li>
+      <Card className='expense-item'>
+        <ExpenseDate date={props.date} />
+        <div className='expense-item__description'>
+          <h2>{props.title}</h2>
+          <div className='expense-item__price'>${props.amount}</div>
+        </div>
+        {/* <button onClick={clickHandler}>Change Title</button> */}
+      </Card>
+    </li>
+  );
+};
+
+export default ExpenseItem;
+
 ```
