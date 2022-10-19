@@ -4,6 +4,7 @@ import Card from '../UI/Card';
 import ExpensesFilter from './ExpensesFilter';
 import ExpenseseList from './ExpensesList';
 import { useState } from 'react';
+import ExpensesChart from './ExpensesChart';
 
 const Expenses = props => {
   const [filteredYear, setFilteredYear] = useState('2020');
@@ -25,6 +26,8 @@ const Expenses = props => {
     <div>
       <Card className='expenses'>
         <ExpensesFilter selected={filteredYear} onChangeFilter={filterChangeHandler} />
+
+        <ExpensesChart expenses={filteredExpenses} />
         {/* 동적인 구문 실행 */}
         {/* &연산자를 추가하고 조건을 만족했을때 랜더링하고 싶은 컨텐츠를 넣는다! */}
         <ExpenseseList items={filteredExpenses} />
